@@ -11,13 +11,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 
 public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
 
-    private int maxValue = 0;
-    private int currentValue = 0;
-    private int minValue = 0;
+    private int maxValue;
+    private int currentValue;
+    private int minValue;
     private float valueToDraw;
     private int step = 0;
 
@@ -45,10 +47,14 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
 
     private void init(Context context, AttributeSet attrs) {
         setSaveEnabled(true);
+        setValue(getCurrentValue());
         this.getThumb().mutate().setAlpha(0);
         this.setBackgroundColor(Color.TRANSPARENT);
         setBackgroundColor(Color.TRANSPARENT);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RangeSeekBarView, 0, 0);
+
+
+        Log.d("CURRENT_VALUE" , "current: "+getCurrentValue());
 
         if (typedArray.hasValue(R.styleable.RangeSeekBarView_stepValue)) {
             step = typedArray.getInt(R.styleable.RangeSeekBarView_stepValue, 0);
@@ -60,7 +66,7 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
             maxValue = typedArray.getInt(R.styleable.RangeSeekBarView_maxValue, 0);
         }
         if (typedArray.hasValue(R.styleable.RangeSeekBarView_currentValue)) {
-            currentValue = typedArray.getInt(R.styleable.RangeSeekBarView_currentValue, 0);
+            setCurrentValue(typedArray.getInt(R.styleable.RangeSeekBarView_currentValue, 0));
         }
         if (typedArray.hasValue(R.styleable.RangeSeekBarView_barHeight)) {
             barHeight = typedArray.getDimensionPixelSize(R.styleable.RangeSeekBarView_barHeight, 0);
@@ -84,12 +90,13 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
         }
         this.setMax(100);
 
-        if (currentValue < minValue || currentValue > maxValue) {
+        if (getCurrentValue() < minValue || getCurrentValue() > maxValue) {
             throw new RuntimeException("Value must be in range   (min <= value <= max) ");
         }
 
-        this.setProgress(calculateProgress(currentValue, minValue, maxValue));
-        setValue(currentValue);
+        setValue(getCurrentValue());
+
+        this.setProgress(calculateProgress(getCurrentValue(), minValue, maxValue));
         typedArray.recycle();
 
         barBasePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -134,15 +141,16 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
 
     public void setValue(int newValue) {
         if (newValue < minValue || newValue > maxValue) {
-            newValue = currentValue;
+            newValue = getCurrentValue();
         }
-        currentValue = newValue;
-        valueToDraw = currentValue;
+        //currentValue = newValue;
+        setCurrentValue(newValue);
+        valueToDraw = getCurrentValue();
         invalidate();
     }
 
     public int getValue() {
-        return currentValue;
+        return getCurrentValue();
     }
 
 
@@ -210,7 +218,7 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
     public Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
         SavedState ss = new SavedState(superState);
-        ss.value = currentValue;
+        ss.value = getCurrentValue();
         return ss;
     }
 
@@ -218,8 +226,8 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
     public void onRestoreInstanceState(Parcelable state) {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
-        currentValue = ss.value;
-        valueToDraw = currentValue;
+        setCurrentValue(ss.value);
+        valueToDraw = getCurrentValue();
     }
 
     @Override
@@ -240,7 +248,7 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
 
     }
 
-    private static class SavedState extends BaseSavedState {
+    private static class SavedState extends View.BaseSavedState {
         int value;
 
         SavedState(Parcelable superState) {
@@ -268,5 +276,13 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
                 return new SavedState[size];
             }
         };
+    }
+
+    public void setCurrentValue(int currentValue) {
+        this.currentValue = currentValue;
+    }
+
+    public int getCurrentValue() {
+        return currentValue;
     }
 }

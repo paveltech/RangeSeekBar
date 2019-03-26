@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rangeSeekBarView=findViewById(R.id.range_seekbar);
+        rangeSeekBarView.setCurrentValue(30);
     }
 
     public void getValue(View view) {

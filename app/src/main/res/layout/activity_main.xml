@@ -20,10 +20,9 @@
         app:circleTextColor="@color/white"
         app:circleTextSize="@dimen/value_bar_circleTextSize"
         app:fillColor="@color/red"
-        app:currentValue="60"
-        app:minValue="15"
+        app:minValue="0"
         app:stepValue="5"
-        app:maxValue="150"
+        app:maxValue="100"
         />
 
 
