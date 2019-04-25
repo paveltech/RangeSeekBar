@@ -12,7 +12,10 @@ import android.os.Parcelable;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
+
 
 public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
 
@@ -33,6 +36,7 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
     private Paint barFillPaint;
     private Paint circlePaint;
     private Paint currentValuePaint;
+    private boolean isListener;
 
 
     public RangeSeekBarView(Context context) {
@@ -122,7 +126,14 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
         currentValuePaint.setTextSize(circleTextSize);
         currentValuePaint.setColor(circleTextColor);
         currentValuePaint.setTextAlign(Paint.Align.CENTER);
+        setSeekbarListener();
         setOnSeekBarChangeListener(this);
+
+    }
+
+
+    public void setListener(boolean isListener) {
+        this.isListener = isListener;
     }
 
     public void setMaxValue(int maxValue) {
@@ -292,5 +303,18 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
                 return new SavedState[size];
             }
         };
+    }
+
+    private void setSeekbarListener() {
+        this.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isListener) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
     }
 }
