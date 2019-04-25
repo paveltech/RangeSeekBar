@@ -36,7 +36,7 @@ public class RangeSeekBarView extends AppCompatSeekBar implements SeekBar.OnSeek
     private Paint barFillPaint;
     private Paint circlePaint;
     private Paint currentValuePaint;
-    private boolean isListener;
+    private boolean isListener = true;
 
 
     public RangeSeekBarView(Context context) {
